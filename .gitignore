@@ -1,0 +1,34 @@
+entvirt/
+__pycache__/
+Backups/
+blob_storage/
+Cache/
+CachedConfigurations/
+CachedData/
+CachedProfilesData/
+Code Cache/
+Crashpad/
+DawnGraphiteCache/
+DawnWebGPUCache/
+Dictionaries/
+GPUCache/
+Local Storage/
+logs/
+Shared Dictionary/
+Session Storage/
+User/
+code.lock
+Cookies*
+DIPS*
+languagepacks.json
+machineid
+Network Persistent State
+Preferences
+Service Worker/
+Shared*
+Trust*
+TransportSecurity
+WebStorage/
+
+.env
+LlistaIPs.json
