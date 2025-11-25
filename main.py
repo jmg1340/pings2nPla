@@ -14,18 +14,25 @@ import requests
 TOKEN_TELEGRAM = config("TOKEN_TELEGRAM")
 
 # CHAT_ID_TELEGRAM 
-CHAT_ID_TELEGRAM = config("CHAT_ID_TELEGRAM")
+CHAT_IDS_TELEGRAM = config("CHAT_IDS_TELEGRAM").split(",")
 # ------------------------------------
+
+print(f"\n###############\n{CHAT_IDS_TELEGRAM}\n##############")
+
 
 def enviar_alerta_telegram(mensaje):
     """Envía un mensaje a un chat de Telegram a través de un bot."""
-    url = f"https://api.telegram.org/bot{TOKEN_TELEGRAM}/sendMessage?chat_id={CHAT_ID_TELEGRAM}&text={mensaje}"
-    try:
-        # Hacemos la petición a la API de Telegram
-        requests.get(url)
-        print("Alerta enviada a Telegram.")
-    except Exception as e:
-        print(f"Error enviando alerta a Telegram: {e}")
+
+
+    for chatID in CHAT_IDS_TELEGRAM:
+
+        url = f"https://api.telegram.org/bot{TOKEN_TELEGRAM}/sendMessage?chat_id={chatID}&text={mensaje}"
+        try:
+            # Hacemos la petición a la API de Telegram
+            requests.get(url)
+            print(f"Alerta enviada a Telegram. ChatID: {chatID}")
+        except Exception as e:
+            print(f"Error enviando alerta a Telegram: {e}")
 
 
 
@@ -59,14 +66,14 @@ def doPings( obj ):
         if resposta != swResposta:
             if resposta:
                 print ( f"ping { obj["ip"] } - { obj["descripcio"] } ...: 🟢 UP \t {str(datetime.now())[:-7]}" )
-                enviar_alerta_telegram( f"'{ obj["descripcio"] }':\n🟢 UP \t {str(datetime.now())[:-7]}" )
+                enviar_alerta_telegram( f"{ obj["descripcio"] }:\n🟢 UP \t {str(datetime.now())[:-7]}" )
             else:
                 print ( f"ping { obj["ip"] } - { obj["descripcio"] } ...: 🔴 DOWN \t {str(datetime.now())[:-7]}" )
-                enviar_alerta_telegram( f"'{ obj["descripcio"] }':\n🔴 DOWN \t {str(datetime.now())[:-7]}" )
+                enviar_alerta_telegram( f"{ obj["descripcio"] }:\n🔴 DOWN \t {str(datetime.now())[:-7]}" )
 
 
         swResposta = resposta
-        time.sleep(120)   # 120 segons
+        time.sleep(30)   # 30 segons
 
         # comptador += 1
 
