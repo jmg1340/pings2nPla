@@ -9,38 +9,33 @@ import requests
 
 
 
-# Webex Configuration
-WEBEX_ACCESS_TOKEN = config("WEBEX_ACCESS_TOKEN")
-WEBEX_ROOM_ID = config("WEBEX_ROOM_ID")
+# --- Sustituye esto con tus datos ---
+# AQUÍ_VA_EL_TOKEN_DE_TU_BOT
+TOKEN_TELEGRAM = config("TOKEN_TELEGRAM")
+
+# CHAT_ID_TELEGRAM 
+CHAT_IDS_TELEGRAM = config("CHAT_IDS_TELEGRAM").split(",")
 # ------------------------------------
 
-print(f"\n###############\nWebex Room ID: {WEBEX_ROOM_ID}\n##############")
+print(f"\n###############\n{CHAT_IDS_TELEGRAM}\n##############")
 
 
-def enviar_alerta_webex(mensaje):
-    """Envía un mensaje a un chat de Webex a través de un bot."""
-    url = "https://webexapis.com/v1/messages"
-    headers = {
-        "Authorization": f"Bearer {WEBEX_ACCESS_TOKEN}",
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "roomId": WEBEX_ROOM_ID,
-        "text": mensaje
-    }
-    try:
-        response = requests.post(url, headers=headers, json=payload)
-        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx or 5xx)
-        print(f"Alerta enviada a Webex. Room ID: {WEBEX_ROOM_ID}")
-    except requests.exceptions.HTTPError as http_err:
-        print(f"HTTP error occurred: {http_err}")
-        if response.status_code == 401:
-            print("Check your Webex Access Token. It might be invalid or expired.")
-        elif response.status_code == 404:
-            print("Check the Webex Room ID. It might not exist or the bot doesn't have access to it.")
-        print(f"Response content: {response.text}")
-    except requests.exceptions.RequestException as req_err:
-        print(f"Error enviando alerta a Webex: {req_err}")
+def enviar_alerta_telegram(mensaje):
+    """Envía un mensaje a un chat de Telegram a través de un bot."""
+
+
+    for chatID in CHAT_IDS_TELEGRAM:
+
+        url = f"https://api.telegram.org/bot{TOKEN_TELEGRAM}/sendMessage?chat_id={chatID}&text={mensaje}"
+        try:
+            # Hacemos la petición a la API de Telegram
+            requests.get(url)
+            print(f"Alerta enviada a Telegram. ChatID: {chatID}")
+        except Exception as e:
+            print(f"Error enviando alerta a Telegram: {e}")
+
+
+
 
 
 def true_false_ping(ip):
@@ -71,10 +66,10 @@ def doPings( obj ):
         if resposta != swResposta:
             if resposta:
                 print ( f"ping { obj["ip"] } - { obj["descripcio"] } ...: 🟢 UP \t {str(datetime.now())[:-7]}" )
-                enviar_alerta_webex( f"{ obj["descripcio"] }:\n🟢 UP \t {str(datetime.now())[:-7]}" )
+                enviar_alerta_telegram( f"{ obj["descripcio"] }:\n🟢 UP \t {str(datetime.now())[:-7]}" )
             else:
                 print ( f"ping { obj["ip"] } - { obj["descripcio"] } ...: 🔴 DOWN \t {str(datetime.now())[:-7]}" )
-                enviar_alerta_webex( f"{ obj["descripcio"] }:\n🔴 DOWN \t {str(datetime.now())[:-7]}" )
+                enviar_alerta_telegram( f"{ obj["descripcio"] }:\n🔴 DOWN \t {str(datetime.now())[:-7]}" )
 
 
         swResposta = resposta
